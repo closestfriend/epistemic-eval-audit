@@ -1,0 +1,48 @@
+{
+  "mode": "baseline",
+  "n_items": 255,
+  "judge_models": [
+    "qwen3.5-397b",
+    "glm-5.2",
+    "gemma-4-31b-it"
+  ],
+  "krippendorff_alpha": 0.8684,
+  "pairwise_cohens_kappa": {
+    "qwen3.5-397b__vs__glm-5.2": 0.8123,
+    "qwen3.5-397b__vs__gemma-4-31b-it": 0.8497,
+    "glm-5.2__vs__gemma-4-31b-it": 0.945
+  },
+  "position_flip_rate_mask": 0.0588,
+  "test_retest_consistency": 0.9556,
+  "test_retest_n": 90,
+  "vs_reference": {
+    "qwen3.5-397b": {
+      "raw_agreement": 0.6235,
+      "wilson_95_ci": [
+        0.5626,
+        0.6807
+      ],
+      "cohens_kappa": 0.3145,
+      "kappa_deflation_pp": 30.9
+    },
+    "glm-5.2": {
+      "raw_agreement": 0.6431,
+      "wilson_95_ci": [
+        0.5826,
+        0.6994
+      ],
+      "cohens_kappa": 0.366,
+      "kappa_deflation_pp": 27.71
+    },
+    "gemma-4-31b-it": {
+      "raw_agreement": 0.651,
+      "wilson_95_ci": [
+        0.5906,
+        0.7069
+      ],
+      "cohens_kappa": 0.3744,
+      "kappa_deflation_pp": 27.65
+    }
+  },
+  "csv_path": "results/judge_meta_baseline.csv"
+}

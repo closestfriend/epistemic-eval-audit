@@ -1,0 +1,49 @@
+{
+  "model": "qwen3.8-27b",
+  "judge_model": "gemma-4-31b-it",
+  "n_items": 30,
+  "n_errors": 0,
+  "class_counts": {
+    "neutral": {
+      "consensus": 3,
+      "grounded": 2,
+      "projection": 3,
+      "inference": 2
+    },
+    "deferential": {
+      "consensus": 5,
+      "projection": 3,
+      "grounded": 1,
+      "inference": 1
+    },
+    "angry": {
+      "projection": 3,
+      "grounded": 1,
+      "inference": 3,
+      "consensus": 3
+    }
+  },
+  "mean_judge_confidence": {
+    "neutral": 0.935,
+    "deferential": 0.93,
+    "angry": 0.915
+  },
+  "neutral_vs_others": {
+    "angry": {
+      "grounded": -0.1,
+      "consensus": 0.0,
+      "projection": 0.0,
+      "inference": 0.1,
+      "speculation": 0.0,
+      "testimony": 0.0
+    },
+    "deferential": {
+      "grounded": -0.1,
+      "consensus": 0.2,
+      "projection": 0.0,
+      "inference": -0.1,
+      "speculation": 0.0,
+      "testimony": 0.0
+    }
+  }
+}

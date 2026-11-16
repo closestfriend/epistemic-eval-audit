@@ -1,0 +1,344 @@
+{
+  "mask": {
+    "null_agent": {
+      "config": "null_agent",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 0.0,
+      "hardened_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "delta_pp": -100.0
+    },
+    "adversarial_agent": {
+      "config": "adversarial_agent",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 0.0,
+      "hardened_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "delta_pp": -100.0
+    },
+    "oracle": {
+      "config": "oracle",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 1.0,
+      "hardened_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "delta_pp": 0.0
+    },
+    "glm-53-flash": {
+      "config": "glm-53-flash",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 0.8,
+      "native_wilson_95_ci": [
+        0.6524,
+        0.895
+      ],
+      "hardened_pass_rate": 0.75,
+      "hardened_wilson_95_ci": [
+        0.5981,
+        0.8581
+      ],
+      "delta_pp": -5.0
+    },
+    "deepseek-v4-flash": {
+      "config": "deepseek-v4-flash",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 0.45,
+      "native_wilson_95_ci": [
+        0.3071,
+        0.6017
+      ],
+      "hardened_pass_rate": 0.4,
+      "hardened_wilson_95_ci": [
+        0.2635,
+        0.554
+      ],
+      "delta_pp": -5.0
+    },
+    "qwen3.8-27b": {
+      "config": "qwen3.8-27b",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 0.3,
+      "native_wilson_95_ci": [
+        0.1807,
+        0.4543
+      ],
+      "hardened_pass_rate": 0.2,
+      "hardened_wilson_95_ci": [
+        0.105,
+        0.3476
+      ],
+      "delta_pp": -10.0
+    },
+    "gemma-4-26b-a4b-it": {
+      "config": "gemma-4-26b-a4b-it",
+      "benchmark": "mask",
+      "n": 40,
+      "native_pass_rate": 0.475,
+      "native_wilson_95_ci": [
+        0.3294,
+        0.625
+      ],
+      "hardened_pass_rate": 0.025,
+      "hardened_wilson_95_ci": [
+        0.0044,
+        0.1288
+      ],
+      "delta_pp": -45.0
+    }
+  },
+  "syceval": {
+    "null_agent": {
+      "config": "null_agent",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 0.0,
+      "native_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "hardened_pass_rate": 0.0,
+      "hardened_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "delta_pp": 0.0
+    },
+    "adversarial_agent": {
+      "config": "adversarial_agent",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 0.0,
+      "native_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "hardened_pass_rate": 0.0,
+      "hardened_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "delta_pp": 0.0
+    },
+    "oracle": {
+      "config": "oracle",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 1.0,
+      "hardened_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "delta_pp": 0.0
+    },
+    "glm-53-flash": {
+      "config": "glm-53-flash",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 0.975,
+      "native_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "hardened_pass_rate": 0.975,
+      "hardened_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "delta_pp": 0.0
+    },
+    "deepseek-v4-flash": {
+      "config": "deepseek-v4-flash",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 1.0,
+      "hardened_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "delta_pp": 0.0
+    },
+    "qwen3.8-27b": {
+      "config": "qwen3.8-27b",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 0.975,
+      "native_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "hardened_pass_rate": 1.0,
+      "hardened_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "delta_pp": 2.5
+    },
+    "gemma-4-26b-a4b-it": {
+      "config": "gemma-4-26b-a4b-it",
+      "benchmark": "syceval",
+      "n": 40,
+      "native_pass_rate": 0.975,
+      "native_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "hardened_pass_rate": 0.975,
+      "hardened_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "delta_pp": 0.0
+    }
+  },
+  "darkbench": {
+    "null_agent": {
+      "config": "null_agent",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 0.0,
+      "hardened_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "delta_pp": -100.0
+    },
+    "adversarial_agent": {
+      "config": "adversarial_agent",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 0.0,
+      "hardened_wilson_95_ci": [
+        0.0,
+        0.0876
+      ],
+      "delta_pp": -100.0
+    },
+    "oracle": {
+      "config": "oracle",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 1.0,
+      "native_wilson_95_ci": [
+        0.9124,
+        1.0
+      ],
+      "hardened_pass_rate": 0.975,
+      "hardened_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "delta_pp": -2.5
+    },
+    "glm-53-flash": {
+      "config": "glm-53-flash",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 0.95,
+      "native_wilson_95_ci": [
+        0.835,
+        0.9862
+      ],
+      "hardened_pass_rate": 0.975,
+      "hardened_wilson_95_ci": [
+        0.8712,
+        0.9956
+      ],
+      "delta_pp": 2.5
+    },
+    "deepseek-v4-flash": {
+      "config": "deepseek-v4-flash",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 0.875,
+      "native_wilson_95_ci": [
+        0.7389,
+        0.9454
+      ],
+      "hardened_pass_rate": 0.95,
+      "hardened_wilson_95_ci": [
+        0.835,
+        0.9862
+      ],
+      "delta_pp": 7.5
+    },
+    "qwen3.8-27b": {
+      "config": "qwen3.8-27b",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 0.875,
+      "native_wilson_95_ci": [
+        0.7389,
+        0.9454
+      ],
+      "hardened_pass_rate": 0.85,
+      "hardened_wilson_95_ci": [
+        0.7093,
+        0.9294
+      ],
+      "delta_pp": -2.5
+    },
+    "gemma-4-26b-a4b-it": {
+      "config": "gemma-4-26b-a4b-it",
+      "benchmark": "darkbench",
+      "n": 40,
+      "native_pass_rate": 0.875,
+      "native_wilson_95_ci": [
+        0.7389,
+        0.9454
+      ],
+      "hardened_pass_rate": 0.9,
+      "hardened_wilson_95_ci": [
+        0.7695,
+        0.9604
+      ],
+      "delta_pp": 2.5
+    }
+  }
+}
