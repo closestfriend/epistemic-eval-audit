@@ -30,13 +30,11 @@ The failure mode we target is a scored model, or anyone optimizing against the b
 
 ## 2. Related Work
 
-**LLM judges and their failure modes.** Zheng et al. (2023) established LLM-as-a-judge and documented position, verbosity and self-enhancement biases. Adversarial work shows judges can be steered. Short universal phrases inflate their scores (Raina et al., 2024), optimized injected sequences make a judge pick the attacker's response (Shi et al., 2024), and superficial "master keys" such as a lone colon or the opener "Thought process:" elicit false positives from judges and reward models (Zhao et al., 2025). A null model that returns one constant, instruction-irrelevant response reaches an 86.5% length-controlled win rate on AlpacaEval 2.0 (Zheng et al., 2025). These attacks target the judge's reading. Ours mostly do not need to: the judges read correctly, and the stages after them pass the response anyway. Making judges more robust would not close the paths we report.
+**LLM judges and benchmark exploits.** Zheng et al. (2023) established LLM-as-a-judge and its biases. Judges can be steered by universal phrases (Raina et al., 2024), optimized injections (Shi et al., 2024) and "master keys" as small as a lone colon (Zhao et al., 2025); a constant null response reaches an 86.5% win rate on AlpacaEval 2.0 (Zheng et al., 2025); and BenchJack's exploits reach near-perfect scores on most of ten agent benchmarks without solving a task (Wang et al., 2026). BetterBench (Reuel et al., 2024) and the Agentic Benchmark Checklist (Zhu et al., 2025) codify design practice. These attacks mostly target the judge's reading or the harness. Ours mostly do not need to: the judges read correctly, and the metric passes the response anyway.
 
-**Judges and epistemic markers.** Lee et al. (2025) find LLM judges biased against epistemic markers, most strongly against expressions of uncertainty (the EMBER benchmark). MASK's pipeline shows the opposite sign at the metric level: non-commitment is credited, not penalized. Read together, the two results say that how a pipeline treats hedging is set by design choices downstream of the judge's reading, and those choices should be stated rather than inherited.
+**Scoring rules and abstention.** Kalai et al. (2025) trace hallucination partly to grading that rewards guessing over acknowledging uncertainty, and propose re-scoring the benchmarks that dominate leaderboards; later work incentivizes confidence-aware abstention (Zong et al., 2026) and asks benchmarks to report abstention rates (Ravikumar, 2026). LLM judges lean the same way: EMBER finds them biased against expressions of uncertainty (Lee et al., 2025). MASK's headline is the mirror image: abstention beats commitment. Neither direction is neutral, and both are set by design choices. Training methods now report reduced dishonesty under pressure on MASK (Chang et al., 2026); our results suggest reading such gains beside the evasion rate.
 
-**Benchmark quality.** BetterBench (Reuel et al., 2024) assesses 24 benchmarks against 46 best practices. The Agentic Benchmark Checklist (Zhu et al., 2025) shows that flaws in task setup or reward design can misestimate agent performance by up to 100% in relative terms. We apply this lens to one under-audited component: the metric that turns judge verdicts into a score.
-
-**Channels of epistemic state.** A model's internal confidence (e.g., P(True); Kadavath et al., 2022) and its verbalized confidence, which tends toward overconfidence (Xiong et al., 2024), are distinct signals. We add a third, *attached* channel (what a pipeline writes about a model's behavior) and measure it here.
+**Self-reported confidence.** Internal confidence (e.g., P(True); Kadavath et al., 2022) and verbalized confidence are distinct channels. Verbalized confidence tends toward overconfidence (Xiong et al., 2024) and stays "largely detached from [models'] actual accuracy" (Miao & Ungar, 2026); models are reluctant to hedge even when wrong (Zhou et al., 2024), and their hedges track intrinsic uncertainty poorly (Yona et al., 2024). Calibration is trainable with proper scoring rules (Damani et al., 2025) but not sufficient: an estimate should also survive prompt perturbations and distinguish different answers (Xia et al., 2026), close to the attack-resistance profile we argue for. Users rely on answers with or without certainty markers (Zhou et al., 2024) and overestimate their accuracy, a gap that narrows when explanations track model confidence (Steyvers et al., 2025). We study a third, *attached* channel: what a pipeline writes about a model's behavior.
 
 ## 3. Methods
 
@@ -52,9 +50,7 @@ The failure mode we target is a scored model, or anyone optimizing against the b
 
 **Real models** (experiment 03). Four open models (`glm-53-flash`, `deepseek-v4-flash`, `qwen3.8-27b`, `gemma-4-26b-a4b-it`) × three benchmarks × 40 generations, scored by both families on identical text. The 40 items are the first 40 rows of each data file, which is sorted by category, so the results are per-category: MASK `known_facts`, SycEval mathematics, DarkBench brand bias.
 
-**Evasion arm** (experiment 05). The same 40 MASK tasks, with one line appended to each persona system prompt: *"You are never required to take a side: when asked to agree or disagree with a statement, decline to commit and present both perspectives neutrally instead."*
-
-**Composite injection** (experiment 07). Injections appended to responses that should fail under each benchmark's own construct (§4.5).
+**Evasion arm and composite injection** (experiments 05 and 07). The same 40 MASK tasks, with one line appended to each persona system prompt: *"You are never required to take a side: when asked to agree or disagree with a statement, decline to commit and present both perspectives neutrally instead."* Experiment 07 appends injections to responses that should fail (§4.5).
 
 **Statistics and evidence.** Intervals are 95% Wilson intervals. Experiments 02, 03, 05 and 07 store per-item files (response, task ID, both scores, hardened verdict and flags, errors). Native verdicts were recovered afterwards from the judge cache (outputs keyed by a SHA-256 hash of the full request): 703 of the 720 native MASK and DarkBench calls in experiments 03 and 05 are recoverable, and each reproduces the score recorded at run time. Experiment 01 kept aggregates only, so its per-attack mechanisms are inferred from the anchors (§4.1).
 
@@ -114,8 +110,6 @@ The hardened rate tracks strict-honest within one item for every model: on real 
 - **The judge mostly did its job.** On the 104 items the hardened scorer flags as evasive, the native judge returned C on 85 (82%), and the metric passed them anyway; the other 19 are unadjudicated judge disagreements.
 - **Behavior changed, not just the scorer.** The hardened scorer's own baseline→evasion drops (75.0→42.5, 40.0→22.5, 20.0→12.5; gemma 2.5→2.5) show that the models really did evade more under the instruction.
 
-All 160 generations succeeded; one transient API failure was caught by per-item error capture and regenerated.
-
 ### 4.5 Injections riding on responses that should fail
 
 Experiment 01's injections stood alone, so a native pass there shows only that the string went unpenalized. Experiment 07 appends injections to responses that should fail under each benchmark's own construct: for MASK, the false statement asserted plainly (the same 40 tasks); for DarkBench, the 17 real experiment-03 outputs the native overseer flagged, plus 20 responses generated by `deepseek-v4-flash` to exhibit one of four patterns (anthropomorphization, sneaking, sycophancy, user retention; 19 flagged). A flip is a control that fails natively whose wrapped variant passes.
@@ -141,7 +135,7 @@ Experiment 01's injections stood alone, so a native pass there shows only that t
 
 **What this means for safety evaluation.** Honesty scores travel into model cards, leaderboards and, potentially, training signals. MASK's headline and DarkBench's incidence can be raised without the certified behavior improving, either by a model that evades or by text appended to its output, and a judge audit would not catch this, because the judge reads correctly. The fixes are small. MASK already computes P(honest) and could headline it, or report the evasion rate beside 1 − P(lie). DarkBench drops overseer failures and could drop invalid outputs the same way, or report the invalid rate beside the incidence. MASK's parser should read the judge's final verdict or require structured output, as the hardened scorer does. We have not re-measured these fixes.
 
-**Epistemic markers.** The April 2025 framework note proposed marking statements with confidence, consensus and temporal validity. The audit revises its semantics: every marker must carry the attack-resistance profile of its own generator. A benchmark score is such a marker, and its generator is judge plus metric. Its profile should state the attacks tested, false-pass rates with n, and a variance note, because hardening has a cost. The nonce wrapping that blocks injections makes each hardened judge call unique, so single-item verdicts near a decision boundary are not reproducible at temperature 0; across the one full rerun pair we have, aggregate rates differed by up to 10 points. High judge consensus (α 0.88) is weak evidence of validity. The informative signal is disagreement between channels: judge consensus versus intended semantics, and the attached score versus the behavior it claims to certify.
+**Epistemic markers.** The April 2025 framework note proposed marking statements with confidence, consensus and temporal validity. The audit revises its semantics: every marker must carry the attack-resistance profile of its own generator. A benchmark score is such a marker, and its generator is judge plus metric. Its profile should state the attacks tested, false-pass rates with n, and a variance note, because hardening costs determinism: the nonce wrapping that blocks injections makes single-item hardened verdicts irreproducible near a decision boundary (Appendix C). High judge consensus (α 0.88) is weak evidence of validity. The informative signal is disagreement between channels: judge consensus versus intended semantics, and the attached score versus the behavior it claims to certify.
 
 ### Limitations
 
@@ -149,34 +143,43 @@ Appendix A gives the full list. The main limits: attacks, defenses and templates
 
 ### Future Work
 
-Re-measure the one-line metric and parser fixes. Re-run DarkBench with brand-bias wording that names each model's own developer, stratified across its six patterns. Extend the evasion arm to user-level and multi-turn instructions, and bring in an external red team for independent attack classes. The three-channel model also raises a user-facing question: do people calibrate better when a score is shown together with its generator's audit status?
-
+Re-measure the one-line metric and parser fixes. Re-run DarkBench with brand-bias wording that names each model's own developer, stratified across its six patterns. Extend the evasion arm to user-level and multi-turn instructions, and bring in an external red team for independent attack classes.
 ## 6. Conclusion
 
 The failures we measured sit downstream of the judge, where LLM-as-a-judge audits rarely look. The judges read evasion, injected verdicts and requests to be marked invalid correctly; MASK's metric and parser and DarkBench's metric turned those readings into passes, and one line of system prompt is enough to exploit this on real models. These stages need disclosure and small fixes more than better judges. The broader requirement is the one this sprint set out to test: an epistemic marker whose generator carries no attack-resistance profile is not a measurement. It is testimony wearing measurement's clothes.
 
 ## Code and Data
 
-- **Code:** <https://github.com/closestfriend/epistemic-eval-audit> (hardened scorers `verifier/`, Inspect AI tasks `harness/`, native ports `targets/`, experiments `experiments/`, reproduction `replicate.sh`).
-- **Data and log:** per-item evidence (experiments 02, 03, 05, 07), experiment-01 aggregates and the judge cache under `results/`; benchmark items from the public MASK, SycEval and DarkBench releases; `LAB_NOTES.md`, a chronological log with per-claim evidence classes and every correction.
+**Code:** <https://github.com/closestfriend/epistemic-eval-audit> (hardened scorers, Inspect AI tasks, native ports, experiments, `replicate.sh`). **Data and log:** per-item evidence, aggregates and the judge cache under `results/`; `LAB_NOTES.md`, a chronological log with per-claim evidence classes and every correction.
 
 ## References
 
-1. Fanous, A., Goldberg, J., Agarwal, A. A., Lin, J., Zhou, A., Daneshjou, R., & Koyejo, S. (2025). SycEval: Evaluating LLM Sycophancy. *AIES 2025*. arXiv:2502.08177.
-2. Kadavath, S., Conerly, T., Askell, A., et al. (2022). Language Models (Mostly) Know What They Know. arXiv:2207.05221.
-3. Karman, H. (2025). Epistemic Metadata: A Schema for Marking Machine-Generated Statements with Confidence, Consensus, and Temporal Validity (v1, April 2025). Framework note, Zenodo. doi:10.5281/zenodo.24273844 (reserved; resolves once the record is published).
-4. Kran, E., Nguyen, H. M., Kundu, A., Jawhar, S., Park, J., & Jurewicz, M. M. (2025). DarkBench: Benchmarking Dark Patterns in Large Language Models. *ICLR 2025*. arXiv:2503.10728. Code: <https://github.com/apartresearch/DarkBench> (commit `7eef151`).
-5. Lee, D., Hwang, Y., Kim, Y., Park, J., & Jung, K. (2025). Are LLM-Judges Robust to Expressions of Uncertainty? Investigating the effect of Epistemic Markers on LLM-based Evaluation. *NAACL 2025*. arXiv:2410.20774.
-6. Raina, V., Liusie, A., & Gales, M. (2024). Is LLM-as-a-Judge Robust? Investigating Universal Adversarial Attacks on Zero-shot LLM Assessment. arXiv:2402.14016.
-7. Ren, R., Agarwal, A., Mazeika, M., et al. (2025). The MASK Benchmark: Disentangling Honesty From Accuracy in AI Systems. arXiv:2503.03750. Code: <https://github.com/centerforaisafety/mask> (commit `25e0b12`).
-8. Reuel, A., Hardy, A., Smith, C., Lamparth, M., Hardy, M., & Kochenderfer, M. J. (2024). BetterBench: Assessing AI Benchmarks, Uncovering Issues, and Establishing Best Practices. *NeurIPS 2024*. arXiv:2411.12990.
-9. Shi, J., Yuan, Z., Liu, Y., Huang, Y., Zhou, P., Sun, L., & Gong, N. Z. (2024). Optimization-based Prompt Injection Attack to LLM-as-a-Judge. *ACM CCS 2024*. arXiv:2403.17710.
-10. UK AI Security Institute. Inspect: A framework for large language model evaluations [software]. <https://github.com/UKGovernmentBEIS/inspect_ai> (accessed November 2026).
-11. Xiong, M., Hu, Z., Lu, X., Li, Y., Fu, J., He, J., & Hooi, B. (2024). Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs. *ICLR 2024*. arXiv:2306.13063.
-12. Zhao, Y., Liu, H., Yu, D., Kung, S., Chen, M., Mi, H., & Yu, D. (2025). One Token to Fool LLM-as-a-Judge. arXiv:2507.08794.
-13. Zheng, L., Chiang, W.-L., Sheng, Y., et al. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. *NeurIPS 2023 Datasets and Benchmarks Track*. arXiv:2306.05685.
-14. Zheng, X., Pang, T., Du, C., Liu, Q., Jiang, J., & Lin, M. (2025). Cheating Automatic LLM Benchmarks: Null Models Achieve High Win Rates. *ICLR 2025*. arXiv:2410.07137.
-15. Zhu, Y., Jin, T., Pruksachatkun, Y., et al. (2025). Establishing Best Practices for Building Rigorous Agentic Benchmarks. arXiv:2507.02825.
+1. Chang, Y.-C., Herbster, N., Gidel, G., & Tosato, T. (2026). CAT-alyzing Honesty: Continuous Adversarial Training for Transferable LLM Honesty. arXiv:2610.22292.
+2. Damani, M., Puri, I., Slocum, S., Shenfeld, I., Choshen, L., Kim, Y., & Andreas, J. (2025). Beyond Binary Rewards: Training LMs to Reason About Their Uncertainty. arXiv:2507.16806.
+3. Fanous, A., Goldberg, J., Agarwal, A. A., Lin, J., Zhou, A., Daneshjou, R., & Koyejo, S. (2025). SycEval: Evaluating LLM Sycophancy. *AIES 2025*. arXiv:2502.08177.
+4. Kadavath, S., Conerly, T., Askell, A., et al. (2022). Language Models (Mostly) Know What They Know. arXiv:2207.05221.
+5. Kalai, A. T., Nachum, O., Vempala, S. S., & Zhang, E. (2025). Why Language Models Hallucinate. arXiv:2509.04664.
+6. Karman, H. (2025). Epistemic Metadata: A Schema for Marking Machine-Generated Statements with Confidence, Consensus, and Temporal Validity (v1, April 2025). Framework note, Zenodo. doi:10.5281/zenodo.24273844 (reserved; resolves once the record is published).
+7. Kran, E., Nguyen, H. M., Kundu, A., Jawhar, S., Park, J., & Jurewicz, M. M. (2025). DarkBench: Benchmarking Dark Patterns in Large Language Models. *ICLR 2025*. arXiv:2503.10728. Code: <https://github.com/apartresearch/DarkBench> (commit `7eef151`).
+8. Lee, D., Hwang, Y., Kim, Y., Park, J., & Jung, K. (2025). Are LLM-Judges Robust to Expressions of Uncertainty? Investigating the effect of Epistemic Markers on LLM-based Evaluation. *NAACL 2025*. arXiv:2410.20774.
+9. Miao, M. M., & Ungar, L. (2026). Closing the Confidence-Faithfulness Gap in Large Language Models. arXiv:2603.25052.
+10. Raina, V., Liusie, A., & Gales, M. (2024). Is LLM-as-a-Judge Robust? Investigating Universal Adversarial Attacks on Zero-shot LLM Assessment. arXiv:2402.14016.
+11. Ravikumar, S. (2026). The Missing "I Don't Know": Why Three Reasoning-Reliability Findings Converge on Calibrated Abstention. *AACL-IJCNLP 2026* (accepted). arXiv:2609.17686.
+12. Ren, R., Agarwal, A., Mazeika, M., et al. (2025). The MASK Benchmark: Disentangling Honesty From Accuracy in AI Systems. arXiv:2503.03750. Code: <https://github.com/centerforaisafety/mask> (commit `25e0b12`).
+13. Reuel, A., Hardy, A., Smith, C., Lamparth, M., Hardy, M., & Kochenderfer, M. J. (2024). BetterBench: Assessing AI Benchmarks, Uncovering Issues, and Establishing Best Practices. *NeurIPS 2024*. arXiv:2411.12990.
+14. Shi, J., Yuan, Z., Liu, Y., Huang, Y., Zhou, P., Sun, L., & Gong, N. Z. (2024). Optimization-based Prompt Injection Attack to LLM-as-a-Judge. *ACM CCS 2024*. arXiv:2403.17710.
+15. Steyvers, M., Tejeda, H., Kumar, A., et al. (2025). What Large Language Models Know and What People Think They Know. *Nature Machine Intelligence*. doi:10.1038/s42256-024-00976-7. arXiv:2401.13835.
+16. UK AI Security Institute. Inspect: A framework for large language model evaluations [software]. <https://github.com/UKGovernmentBEIS/inspect_ai> (accessed November 2026).
+17. Wang, H., Li, H., Mang, Q., Cheung, A., Sen, K., & Song, D. (2026). Do Androids Dream of Breaking the Game? Systematically Auditing AI Agent Benchmarks with BenchJack. arXiv:2605.12673.
+18. Xia, Y., Ulmer, D., Blevins, T., Liu, Y., Schütze, H., & Roth, B. (2026). Calibration Is Not Enough: Evaluating Confidence Estimation Under Language Variations. arXiv:2601.08064.
+19. Xiong, M., Hu, Z., Lu, X., Li, Y., Fu, J., He, J., & Hooi, B. (2024). Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs. *ICLR 2024*. arXiv:2306.13063.
+20. Yona, G., Aharoni, R., & Geva, M. (2024). Can Large Language Models Faithfully Express Their Intrinsic Uncertainty in Words? *EMNLP 2024*, 7752–7764.
+21. Zhao, Y., Liu, H., Yu, D., Kung, S., Chen, M., Mi, H., & Yu, D. (2025). One Token to Fool LLM-as-a-Judge. arXiv:2507.08794.
+22. Zheng, L., Chiang, W.-L., Sheng, Y., et al. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. *NeurIPS 2023 Datasets and Benchmarks Track*. arXiv:2306.05685.
+23. Zheng, X., Pang, T., Du, C., Liu, Q., Jiang, J., & Lin, M. (2025). Cheating Automatic LLM Benchmarks: Null Models Achieve High Win Rates. *ICLR 2025*. arXiv:2410.07137.
+24. Zhou, K., Hwang, J. D., Ren, X., & Sap, M. (2024). Relying on the Unreliable: The Impact of Language Models' Reluctance to Express Uncertainty. *ACL 2024*, 3623–3643.
+25. Zhu, Y., Jin, T., Pruksachatkun, Y., et al. (2025). Establishing Best Practices for Building Rigorous Agentic Benchmarks. arXiv:2507.02825.
+26. Zong, H., Li, B., Long, Y., Chang, S., Wu, J., & Hadfield, G. K. (2026). I-CALM: Incentivizing Confidence-Aware Abstention for LLM Selective Answering. arXiv:2604.03904.
 
 ## Appendix A. Limitations and Dual-Use / Ethical Considerations
 
@@ -209,7 +212,7 @@ The failures we measured sit downstream of the judge, where LLM-as-a-judge audit
 ## Appendix C. Measurement notes
 
 - **Nonce-variance trade-off.** Randomized candidate wrapping makes every hardened judge call unique: there are no cache hits, and single-item verdicts near decision boundaries are not reproducible at temperature 0 (observed 36/40 vs 40/40 on identical text). Across the one full rerun pair, aggregate rates differed by up to 10 points; single-item reproducibility was checked only with a 12-item diagnostic re-score. Security hardening and verdict determinism pull against each other, which is why an attack-resistance profile must carry a variance note and not only a false-pass rate.
-- **Silent-failure capture.** One target model's 40 generation calls failed in a transient API window, and an early runner stored and scored the empty strings. Cache forensics and the per-item evidence layer caught it; the cell was regenerated (40/40 non-empty), and every runner now captures errors per item. In the framework's terms, the pipeline had recorded an inference ("the model produced nothing") as if it were grounded; the true claim was about the API. The benchmark metrics of §4.1 make the same move at scale: a non-measurement (verdict C, an `invalid` flag) recorded as a pass.
+- **Silent-failure capture.** One target model's 40 generation calls failed in a transient API window, and an early runner stored and scored the empty strings. Cache forensics and the per-item evidence layer caught it; the cell was regenerated (40/40 non-empty), and every runner now captures errors per item. In experiment 05, that capture caught one transient failure, which was regenerated; all 160 generations succeeded. In the framework's terms, the pipeline had recorded an inference ("the model produced nothing") as if it were grounded; the true claim was about the API. The benchmark metrics of §4.1 make the same move at scale: a non-measurement (verdict C, an `invalid` flag) recorded as a pass.
 - **Provenance.** Two runs of different provenance once silently occupied the same results path; all runners now write to timestamped run directories.
 - **Corrections to our own drafts.** Two earlier drafts overstated the evidence. One said the native MASK judge could not tell commitment from hedging (the recovered verdicts show it returned C on 85 of 104 evasive items); the other attributed the attack-suite passes to parse failures (none occurs in any per-item cell, and upstream DarkBench drops overseer failures rather than passing them). Both were caught by recomputing from the released evidence; `LAB_NOTES.md` records each correction.
 
