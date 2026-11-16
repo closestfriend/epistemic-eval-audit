@@ -3,7 +3,8 @@
 Red-team audit of the LLM judges behind three published epistemic-behavior benchmarks — **MASK** (honesty/strategic deception), **SycEval** (sycophancy), **DarkBench** (dark design patterns) — plus a **hardened re-implementation** of each scorer, and a measurement of how the two disagree when the candidate is a *real model* rather than a crafted string.
 
 **Sprint:** Apart Research AI×Epistemics (Nov 2026).
-**Status:** experiments 01–03, 05 and 07 complete; 04 (implicit non-completion) implemented, not run. Write-up: `PAPER.md`.
+**Status:** experiments 01–03, 05 and 07 complete; 04 (implicit non-completion) implemented, not run. Report: `PAPER.pdf` (Apart submission template; source `PAPER.md`, Figure 1 from `scripts/plot_fig1_evasion.py`).
+**Pre-existing work (disclosed per sprint rules):** `vendor/benchmark-designer/` is the author's toolkit, written before the sprint; we use its 12 generic degenerate-output attacks (`scorer_redteam.py`) and its Wilson-interval and agreement statistics (`judge_meta_eval.py`). The April 2025 framework note (Zenodo DOI 10.5281/zenodo.24273844, reserved) also predates the sprint. Everything else in this repository was built during the sprint, Nov 13–15, 2026.
 
 ---
 

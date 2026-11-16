@@ -1,6 +1,6 @@
 # Epistemic Metadata Framework v2.0 (2026-11-14)
 
-**Provenance:** Supersedes v1 (`MY FRAMEWORK.txt`, file-dated 2025-04-14; author states composition predates the file; Zenodo deposit forthcoming). v1 is immutable — this document cites it, never rewrites it.
+**Provenance:** Supersedes v1 (`MY FRAMEWORK.txt`, file-dated 2025-04-14; author states composition predates the file; Zenodo DOI 10.5281/zenodo.24273844, reserved, resolves on publication). v1 is immutable — this document cites it, never rewrites it.
 **What changed since v1 and why:** every change below is driven by evidence gathered 2025–2026, tagged [GRD] (grounded in repo data or literature). The v1 design space was correct; its *semantics* were not — this document fixes the semantics.
 
 ---
